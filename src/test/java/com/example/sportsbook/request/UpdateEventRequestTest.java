@@ -5,23 +5,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateEventRequestTest {
+class UpdateEventRequestTest {
 
     @Test
     public void testEquals() {
-        CreateEventRequest createEventRequest1 = new CreateEventRequest("eventName", "score");
-        CreateEventRequest createEventRequest2 = new CreateEventRequest("eventName", "score");
+        UpdateEventRequest updateEventRequest1 = new UpdateEventRequest("score");
+        UpdateEventRequest updateEventRequest2 = new UpdateEventRequest("score");
 
-        assertThat(createEventRequest1).isEqualTo(createEventRequest2);
+        assertThat(updateEventRequest1).isEqualTo(updateEventRequest2);
     }
 
     @Test
     public void testHashcode() {
-        CreateEventRequest createEventRequest1 = new CreateEventRequest("eventName", "score");
-        CreateEventRequest createEventRequest2 = new CreateEventRequest("eventName", "score");
+        UpdateEventRequest updateEventRequest1 = new UpdateEventRequest("score");
+        UpdateEventRequest updateEventRequest2 = new UpdateEventRequest("score");
 
-        int hashcode1 = createEventRequest1.hashCode();
-        int hashcode2 = createEventRequest2.hashCode();
+        int hashcode1 = updateEventRequest1.hashCode();
+        int hashcode2 = updateEventRequest2.hashCode();
 
         assertThat(hashcode1).isEqualTo(hashcode2);
     }

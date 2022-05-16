@@ -6,6 +6,7 @@ import com.example.sportsbook.model.Event;
 import com.example.sportsbook.request.CreateEventRequest;
 import com.example.sportsbook.response.EventResponse;
 import com.example.sportsbook.service.EventService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,7 @@ class EventControllerTest {
     private final CreateEventRequest createEventRequest = new CreateEventRequest("eventName", "score");
 
     @Test
-    public void createEventShouldCallEventService() {
+    public void createEventShouldCallEventService() throws JsonProcessingException {
         when(eventService.createEvent(any())).thenReturn(new Event("eventId", "eventName", "score"));
 
         EventResponse eventResponse = eventController.createEvent(createEventRequest);

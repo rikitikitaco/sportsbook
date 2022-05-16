@@ -6,6 +6,7 @@ import com.example.sportsbook.request.CreateEventRequest;
 import com.example.sportsbook.request.UpdateEventRequest;
 import com.example.sportsbook.response.EventResponse;
 import com.example.sportsbook.service.EventService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class EventController {
             consumes = "application/json"
     )
     @ResponseBody
-    public EventResponse createEvent(@RequestBody CreateEventRequest createEventRequest) {
+    public EventResponse createEvent(@RequestBody CreateEventRequest createEventRequest) throws JsonProcessingException {
         Event event = eventService.createEvent(createEventRequest);
         return new EventResponse(
                 event.getEventId(),
@@ -58,7 +59,7 @@ public class EventController {
             consumes = "application/json"
     )
     @ResponseStatus(HttpStatus.OK)
-    public void updateEvent(@PathVariable String eventId, @RequestBody UpdateEventRequest updateEventRequest) {
+    public void updateEvent(@PathVariable String eventId, @RequestBody UpdateEventRequest updateEventRequest) throws JsonProcessingException {
         eventService.updateEvent(updateEventRequest, eventId);
     }
 }

@@ -5,6 +5,8 @@ import com.example.sportsbook.model.Event;
 import com.example.sportsbook.persistence.MongoEventRepository;
 import com.example.sportsbook.request.CreateEventRequest;
 import com.example.sportsbook.request.UpdateEventRequest;
+import com.example.sportsbook.websocket.SocketHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +28,9 @@ class EventServiceTest {
     @Mock
     private MongoEventRepository mongoEventRepository;
 
+    @Mock
+    private SocketHandler socketHandler;
+
     @InjectMocks
     private EventService eventService;
 
@@ -36,7 +41,7 @@ class EventServiceTest {
     private final UpdateEventRequest updateEventRequest = new UpdateEventRequest("newScore");
 
     @Test
-    public void shouldCallMongoRepositoryToCreateEvent() {
+    public void shouldCreateEventInMongoAndNotifySocketHandler() throws JsonProcessingException {
         Event savedEvent = new Event("eventId", "eventName", "score");
         when(mongoEventRepository.save(any())).thenReturn(savedEvent);
 
@@ -46,14 +51,20 @@ class EventServiceTest {
         assertThat(eventCaptor.getValue().getEventId()).isNotBlank();
         assertThat(eventCaptor.getValue().getEventName()).isEqualTo("eventName");
         assertThat(eventCaptor.getValue().getScore()).isEqualTo("score");
+
         assertThat(event.getEventId()).isEqualTo("eventId");
         assertThat(event.getEventName()).isEqualTo("eventName");
         assertThat(event.getScore()).isEqualTo("score");
 
+        verify(socketHandler).notify(eventCaptor.capture());
+        assertThat(eventCaptor.getValue().getEventId()).isNotBlank();
+        assertThat(eventCaptor.getValue().getEventName()).isEqualTo("eventName");
+        assertThat(eventCaptor.getValue().getScore()).isEqualTo("score");
+
     }
 
     @Test
-    public void shouldCallMongoRepositoryToGetEvent() {
+    public void shouldGetEventFromMongoRepository() {
         Event savedEvent = new Event("eventId", "eventName", "score");
         when(mongoEventRepository.findByEventId(any())).thenReturn(Optional.of(savedEvent));
 
@@ -76,7 +87,7 @@ class EventServiceTest {
     }
 
     @Test
-    public void shouldCallMongoRepositoryToUpdateEvent() {
+    public void shouldCallUpdateEventAndNotifySocketHandler() throws JsonProcessingException {
         Event savedEvent = new Event("eventId", "eventName", "score");
         when(mongoEventRepository.save(any())).thenReturn(savedEvent);
         when(mongoEventRepository.findByEventId(any())).thenReturn(Optional.of(savedEvent));
@@ -84,7 +95,13 @@ class EventServiceTest {
         eventService.updateEvent(updateEventRequest, "eventId");
 
         verify(mongoEventRepository).findByEventId("eventId");
+
         verify(mongoEventRepository).save(eventCaptor.capture());
+        assertThat(eventCaptor.getValue().getEventId()).isNotBlank();
+        assertThat(eventCaptor.getValue().getEventName()).isEqualTo("eventName");
+        assertThat(eventCaptor.getValue().getScore()).isEqualTo("newScore");
+
+        verify(socketHandler).notify(eventCaptor.capture());
         assertThat(eventCaptor.getValue().getEventId()).isNotBlank();
         assertThat(eventCaptor.getValue().getEventName()).isEqualTo("eventName");
         assertThat(eventCaptor.getValue().getScore()).isEqualTo("newScore");
