@@ -17,6 +17,15 @@
 * A websocket client such as wscat
 
 ## Usage
+
+### Build
+
+```./gradlew clean build```
+
+### Run Tests
+
+```./gradlew test```
+
 ### Running locally
 
 1. Run mongoDB in docker
